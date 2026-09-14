@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veris QA AI</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="authScreen" class="auth-screen hidden">
+    <div class="auth-card">
+      <div class="brand-mark">VQ</div>
+      <h1>Veris QA AI</h1>
+      <p id="authSubtitle">Control Center</p>
+      <label>Usuario<input id="authUser" autocomplete="username" /></label>
+      <label>Contraseña<input id="authPassword" type="password" autocomplete="current-password" /></label>
+      <button id="authBtn">Entrar</button>
+      <div id="authMessage" class="message"></div>
+    </div>
+  </div>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark small">VQ</div><div><strong>Veris QA AI</strong><span>v1.0 Enterprise Control Center</span></div></div>
+      <nav>
+        <button data-page="dashboard" class="nav active">Dashboard</button>
+        <div class="nav-label">QA</div>
+        <button data-page="workspace" class="nav">QA Workspace</button>
+        <button data-page="cases" class="nav">Test Cases</button>
+        <button data-page="executions" class="nav">Executions</button>
+        <div class="nav-label">Connections</div>
+        <button data-page="connections" class="nav">Connections</button>
+        <div class="nav-label">Tools</div>
+        <button data-page="sql" class="nav">SQL Lab</button>
+        <button data-page="api" class="nav">API Lab</button>
+        <button data-page="learning" class="nav">AI & Learning</button>
+        <button data-page="system" class="nav">Environment Check</button>
+      </nav>
+      <div class="sidebar-footer">
+        <span id="userBadge">admin</span>
+        <button id="logoutBtn" class="ghost">Salir</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div><h1 id="pageTitle">Dashboard</h1><p id="pageSubtitle">Estado general del entorno QA.</p></div>
+        <div class="top-badges"><span id="aiStatus" class="badge">IA…</span><span id="globalStatus" class="badge muted">Listo</span></div>
+      </header>
+
+      <section id="page-dashboard" class="page active">
+        <div id="metricGrid" class="metric-grid"></div>
+        <div class="panel"><div class="panel-head"><h2>Ejecuciones recientes</h2><button id="refreshDashboard" class="secondary">Refrescar</button></div><div id="recentExecutions"></div></div>
+      </section>
+
+      <section id="page-connections" class="page">
+        <div class="two-col">
+          <div class="panel">
+            <h2>Ambientes</h2>
+            <div class="grid2"><label>Nombre<input id="envName" placeholder="QA" /></label><label>Descripción<input id="envDescription" placeholder="Ambiente QA" /></label></div>
+            <button id="saveEnvBtn">Guardar ambiente</button>
+            <div id="envList" class="list"></div>
+          </div>
+          <div class="panel">
+            <h2>PostgreSQL</h2>
+            <div class="grid2">
+              <label>Nombre<input id="dbName" placeholder="Veris QA DB" /></label>
+              <label>Host<input id="dbHost" /></label>
+              <label>Puerto<input id="dbPort" type="number" value="5432" /></label>
+              <label>Database<input id="dbDatabase" /></label>
+              <label>Usuario<input id="dbUser" /></label>
+              <label>Contraseña<input id="dbPassword" type="password" /></label>
+              <label>SSL<select id="dbSsl"><option>prefer</option><option>require</option><option>verify-ca</option><option>verify-full</option><option>disable</option></select></label>
+              <label>Schema<input id="dbSchema" value="public" /></label>
+            </div>
+            <div class="row"><button id="testDbBtn">Probar</button><button id="saveDbBtn" class="secondary">Guardar</button></div>
+            <div id="dbList" class="list"></div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <h2>Web</h2>
+            <div class="grid2">
+              <label>Nombre<input id="webName" placeholder="Mi Veris QA" /></label>
+              <label>Ambiente<select id="webEnv"></select></label>
+              <label>Base URL<input id="webBaseUrl" placeholder="https://..." /></label>
+              <label>Login URL<input id="webLoginUrl" /></label>
+              <label>Usuario QA<input id="webUser" /></label>
+              <label>Password QA<input id="webPassword" type="password" /></label>
+              <label>Browser<select id="webBrowser"><option>chromium</option><option>firefox</option><option>webkit</option></select></label>
+              <label>Headless<select id="webHeadless"><option value="false">No</option><option value="true">Sí</option></select></label>
+            </div>
+            <button id="saveWebBtn">Guardar Web</button>
+            <div id="webList" class="list"></div>
+          </div>
+          <div class="panel">
+            <h2>API</h2>
+            <div class="grid2">
+              <label>Nombre<input id="apiName" placeholder="Veris API QA" /></label>
+              <label>Ambiente<select id="apiEnv"></select></label>
+              <label>Base URL<input id="apiBaseUrl" placeholder="https://api..." /></label>
+              <label>Auth Header<input id="apiAuthHeader" value="Authorization" /></label>
+              <label>Token<input id="apiToken" type="password" placeholder="Se cifra localmente" /></label>
+              <label>Verify TLS<select id="apiVerifyTls"><option value="true">Sí</option><option value="false">No</option></select></label>
+            </div>
+            <label>Headers por defecto JSON<textarea id="apiDefaultHeaders" rows="4">{}</textarea></label>
+            <button id="saveApiBtn">Guardar API</button>
+            <div id="apiProfileList" class="list"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><div><h2>Mobile / Appium</h2><p class="hint">Android con UiAutomator2. iOS con XCUITest desde macOS.</p></div><span class="badge">APPIUM</span></div>
+          <div class="grid2">
+            <label>Nombre<input id="mobileName" placeholder="Mi Veris Android QA" /></label>
+            <label>Ambiente<select id="mobileEnv"></select></label>
+            <label>Plataforma<select id="mobilePlatform"><option value="android">Android</option><option value="ios">iOS</option></select></label>
+            <label>Appium URL<input id="mobileAppiumUrl" value="http://127.0.0.1:4723" /></label>
+            <label>Device name<input id="mobileDeviceName" placeholder="Android Emulator / iPhone" /></label>
+            <label>Usuario QA App<input id="mobileUser" /></label>
+            <label>Password QA App<input id="mobilePassword" type="password" /></label>
+            <label>UDID<input id="mobileUdid" /></label>
+            <label>Platform version<input id="mobileVersion" /></label>
+            <label>Automation name<input id="mobileAutomation" placeholder="UiAutomator2 / XCUITest" /></label>
+            <label>Android appPackage<input id="mobilePackage" /></label>
+            <label>Android appActivity<input id="mobileActivity" /></label>
+            <label>iOS bundleId<input id="mobileBundleId" /></label>
+            <label>APK / app path<input id="mobileAppPath" /></label>
+          </div>
+          <button id="saveMobileBtn">Guardar Mobile</button>
+          <div id="mobileList" class="list"></div>
+        </div>
+      </section>
+
+      <section id="page-sql" class="page">
+        <div class="sql-layout">
+          <aside class="panel">
+            <h2>Conexión</h2>
+            <label>Conexión guardada<select id="sqlConnection"></select></label>
+            <div class="row"><button id="sqlLoadSchema">Mostrar tablas</button><button id="sqlRefreshSchema" class="secondary">Actualizar</button></div>
+            <input id="schemaSearch" placeholder="Buscar tabla/columna" />
+            <div id="schemaStats" class="hint"></div>
+            <div id="schemaTree" class="schema-tree"></div>
+            <h3>Memoria</h3>
+            <textarea id="knowledge" rows="3" placeholder="Regla de negocio confirmada"></textarea>
+            <button id="saveKnowledgeBtn" class="secondary">Guardar regla</button>
+            <div id="memoryList" class="memory-list"></div>
+          </aside>
+          <div class="stack">
+            <div class="panel"><h2>Preguntar a la base</h2><textarea id="question" rows="3" placeholder="Dame los convenios activos del cliente 415"></textarea><div class="row"><button id="askBtn">Generar y ejecutar</button><button id="genBtn" class="secondary">Solo SQL</button><button id="verifyBtn" class="secondary" disabled>Confirmar SQL</button><button id="aiStatusBtn" class="secondary">Estado Router</button><button id="aiProbeBtn" class="secondary">Probar proveedores</button></div><p id="aiRouterStatus" class="hint">AI Router: sin comprobar</p><p id="memoryUsage" class="hint"></p></div>
+            <div class="panel"><div class="panel-head"><h2>Editor SQL</h2><span class="badge good">READ ONLY</span></div><textarea id="sqlEditor" class="code" rows="12"></textarea><div class="row"><button id="runSqlBtn">Ejecutar SQL</button><button id="clearSqlResults" class="secondary">Limpiar resultados</button><label class="inline">Máx filas <input id="maxRows" type="number" value="200" min="1" max="5000" /></label></div></div>
+            <div class="panel"><div class="panel-head"><h2>Resultados</h2><span id="queryTiming" class="badge muted">sin ejecutar</span></div><div id="sqlMessage" class="message"></div><div class="table-wrap"><table id="sqlResults"></table></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-api" class="page">
+        <div class="panel">
+          <div class="panel-head"><h2>API Lab</h2><span class="badge">HTTPX</span></div>
+          <div class="api-row"><select id="apiLabProfile"></select><select id="apiMethod"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select><input id="apiPath" placeholder="/endpoint" /><button id="sendApiBtn">Enviar</button></div>
+          <div class="two-col"><label>Headers JSON<textarea id="apiHeaders" rows="8">{}</textarea></label><label>Body JSON<textarea id="apiBody" rows="8"></textarea></label></div>
+        </div>
+        <div class="panel"><div class="panel-head"><h2>Respuesta</h2><span id="apiTiming" class="badge muted">sin ejecutar</span></div><pre id="apiResponse" class="output"></pre></div>
+      </section>
+
+      <section id="page-workspace" class="page">
+        <div class="panel intake-panel">
+          <div class="panel-head"><div><h2>Case Intake — Excel / JSON</h2><p class="hint">Adjunta casos de uso. El AI Router los interpreta, crea un plan determinista y los guarda como casos ejecutables.</p></div><span class="badge good">MEMORIA PROPIA</span></div>
+          <div class="grid2">
+            <label>Archivo<input id="caseImportFile" type="file" accept=".xlsx,.json,.csv,.tsv" /></label>
+            <label>Ambiente<select id="importEnv"></select></label>
+            <label>Perfil Web<select id="importWeb"></select></label>
+            <label>PostgreSQL<select id="importDb"></select></label>
+            <label>Perfil API<select id="importApi"></select></label>
+            <label>Perfil Mobile<select id="importMobile"></select></label>
+            <label class="inline-check"><input id="importAutoSave" type="checkbox" checked /> Guardar casos automáticamente</label>
+          </div>
+          <div class="row"><button id="interpretCasesBtn">Interpretar y preparar QA</button><button id="runImportedSuiteBtn" class="danger" disabled>Ejecutar casos guardados</button><button id="refreshAiRouterBtn" class="secondary">Estado AI Router</button></div>
+          <div id="caseImportStatus" class="message"></div>
+          <div id="caseImportPreview" class="import-preview"></div>
+        </div>
+        <div class="workspace-grid">
+          <div class="panel viewer-panel"><div class="panel-head"><h2>Managed QA Browser</h2><span id="browserState" class="badge muted">cerrado</span></div><div class="browser-toolbar"><select id="workspaceWebProfile"></select><button id="startBrowserBtn">Iniciar</button><button id="stopBrowserBtn" class="secondary">Cerrar</button><input id="gotoUrl" placeholder="/ruta o URL" /><button id="gotoBtn" class="secondary">Ir</button></div><div id="browserMeta" class="hint"></div><div class="viewer"><img id="browserShot" alt="Vista del navegador QA" /></div></div>
+          <div class="panel"><h2>Acciones manuales</h2><label>Selector CSS / texto<input id="webSelector" placeholder="#boton o texto" /></label><label>Valor<input id="webValue" placeholder="Texto para fill / esperado" /></label><div class="action-grid"><button data-web-action="click">Click selector</button><button data-web-action="fill">Fill selector</button><button data-web-action="expect_visible">Expect visible</button><button data-web-action="expect_text">Expect text</button><button data-web-action="screenshot">Screenshot</button></div><h3>Console / Network</h3><pre id="browserLogs" class="output compact"></pre></div>
+        </div>
+        <div class="workspace-grid mobile-workspace">
+          <div class="panel viewer-panel">
+            <div class="panel-head"><h2>Managed Mobile QA</h2><span id="mobileState" class="badge muted">cerrado</span></div>
+            <div class="browser-toolbar"><select id="workspaceMobileProfile"></select><button id="startMobileBtn">Iniciar Appium</button><button id="stopMobileBtn" class="secondary">Cerrar</button></div>
+            <div id="mobileMeta" class="hint"></div><div class="viewer mobile-viewer"><img id="mobileShot" alt="Vista del dispositivo Mobile QA" /></div>
+          </div>
+          <div class="panel"><h2>Acciones Mobile</h2>
+            <label>Tipo de locator<select id="mobileLocatorType"><option value="accessibility_id">accessibility_id</option><option value="id">id</option><option value="text">text</option><option value="xpath">xpath</option><option value="android_uiautomator">android_uiautomator</option><option value="ios_predicate">ios_predicate</option></select></label>
+            <label>Locator<input id="mobileLocator" placeholder="id / texto / xpath" /></label><label>Valor<input id="mobileValue" placeholder="Texto para fill" /></label>
+            <div class="action-grid"><button data-mobile-action="click">Click</button><button data-mobile-action="fill">Fill</button><button data-mobile-action="expect_visible">Expect visible</button><button data-mobile-action="back">Back</button><button data-mobile-action="screenshot">Screenshot</button></div>
+            <pre id="mobileLogs" class="output compact"></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-cases" class="page">
+        <div class="two-col cases-grid">
+          <div class="panel"><h2>Casos QA</h2><div id="caseList" class="list"></div></div>
+          <div class="panel"><h2>Editor de caso</h2><div class="grid2"><label>ID<input id="caseKey" placeholder="CU-019" /></label><label>Nombre<input id="caseName" /></label><label>Ambiente<select id="caseEnv"></select></label><label>Descripción<input id="caseDescription" /></label></div><label>Plan JSON<textarea id="casePlan" class="code" rows="22"></textarea></label><div class="row"><button id="saveCaseBtn">Guardar caso</button><button id="newCaseBtn" class="secondary">Nuevo</button><button id="runCaseBtn" class="danger">Ejecutar caso</button></div><div id="caseRunResult" class="message"></div></div>
+        </div>
+      </section>
+
+      <section id="page-executions" class="page"><div class="panel"><div class="panel-head"><h2>Ejecuciones</h2><button id="refreshExecutions" class="secondary">Refrescar</button></div><div id="executionList"></div></div></section>
+
+      <section id="page-learning" class="page">
+        <div class="two-col">
+          <div class="panel"><h2>Memoria QA propia</h2><p>La memoria pertenece a Veris QA AI y no a un proveedor. El AI Router puede cambiar de API sin perder reglas, playbooks ni experiencias.</p><label>Título<input id="agentKnowledgeTitle" placeholder="Regla de consentimiento" /></label><label>Conocimiento confirmado<textarea id="agentKnowledgeContent" rows="6" placeholder="Ej.: después del login, si no existe consentimiento vigente debe mostrarse el formulario..."></textarea></label><button id="saveAgentKnowledgeBtn">Guardar en memoria</button><div id="agentKnowledgeMsg" class="message"></div></div>
+          <div class="panel"><h2>Estado de aprendizaje</h2><div id="learningInfo" class="info-box"></div></div>
+        </div>
+      </section>
+
+      <section id="page-system" class="page"><div class="panel"><div class="panel-head"><h2>Environment Check</h2><button id="runSystemCheck">Comprobar</button></div><div id="systemCheck"></div></div></section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

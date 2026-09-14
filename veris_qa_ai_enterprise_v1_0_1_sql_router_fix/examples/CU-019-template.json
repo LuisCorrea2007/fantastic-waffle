@@ -1,0 +1,52 @@
+{
+  "variables": {},
+  "steps": [
+    {
+      "type": "db.query",
+      "name": "Validar precondición en PostgreSQL",
+      "connection_id": 1,
+      "sql": "SELECT CURRENT_TIMESTAMP AS ahora",
+      "expect_min_rows": 1
+    },
+    {
+      "type": "web.start",
+      "name": "Abrir canal Web QA",
+      "profile_id": 1
+    },
+    {
+      "type": "web.fill",
+      "name": "Completar usuario",
+      "selector": "input[name='username']",
+      "value": "{{web.username}}"
+    },
+    {
+      "type": "web.fill",
+      "name": "Completar password",
+      "selector": "input[name='password']",
+      "value": "{{web.password}}"
+    },
+    {
+      "type": "web.click",
+      "name": "Login",
+      "selector": "button[type='submit']",
+      "evidence": true
+    },
+    {
+      "type": "api.request",
+      "name": "Validar API",
+      "profile_id": 1,
+      "method": "GET",
+      "path": "/health",
+      "expected_status": 200
+    },
+    {
+      "type": "web.screenshot",
+      "name": "Evidencia final",
+      "evidence": true
+    },
+    {
+      "type": "web.stop",
+      "name": "Cerrar navegador"
+    }
+  ]
+}

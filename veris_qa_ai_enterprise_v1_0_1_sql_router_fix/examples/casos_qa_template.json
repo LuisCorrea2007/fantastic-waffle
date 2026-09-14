@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "ID": "CU-001",
+      "Categoría": "Web + DB",
+      "Título del Caso de Uso": "Ejemplo de consentimiento",
+      "Precondición": "Paciente QA sin consentimiento vigente",
+      "Acción": "Iniciar sesión y validar que se muestre el formulario",
+      "Resultado Esperado": "El formulario se muestra y al aceptar queda persistido en PostgreSQL"
+    },
+    {
+      "ID": "CU-002",
+      "Categoría": "Android",
+      "Título del Caso de Uso": "Ejemplo Mobile",
+      "Precondición": "Usuario QA activo",
+      "Acción": "Abrir la app e iniciar sesión",
+      "Resultado Esperado": "Se muestra la pantalla principal"
+    }
+  ]
+}
